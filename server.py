@@ -53,17 +53,21 @@ class myHandler(BaseHTTPRequestHandler):
 		                 'CONTENT_TYPE':self.headers['Content-Type'],
 			})
 
-			link=form["your_name"].value
-			print "Your URL is: %s" % form["your_name"].value
+			link=form["url"].value
+			name=form["filename"].value
+			print "Your URL is: "+link
+			print "Your Filename: "+name
 			self.send_response(200)
 			self.end_headers()
 
-                        ydl_opts = {'outtmpl': 'test.mp3','format': 'bestaudio/best','postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3','preferredquality': '192',}],}
+                        ydl_opts = {'outtmpl': name+'.mp3','format': 'bestaudio/best','postprocessors': 
+				[{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3','preferredquality': '192',}],}
 
 
                         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                             ydl.download([link])
-    			self.wfile.write('<a href="test.mp3" download >Download<a>')
+			self.wfile.write('<a href="%s.mp3" download>Download<a>' % name)
+    			#self.wfile.write('<center><a href="%s.mp3" download >Download<a><br><a href="index.html">Back<a></center>' % name)
 			return
 
 
