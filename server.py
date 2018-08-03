@@ -1,48 +1,48 @@
 #!/usr/bin/python
 from __future__ import unicode_literals
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
+import urlparse
+import songdetails
 import youtube_dl
 from os import curdir, sep, system
 import cgi
 
 PORT_NUMBER = 8080
 class myHandler(BaseHTTPRequestHandler):
-	
+
 	def do_GET(self):
-		if self.path=="/":
-			self.path="/index.html"
+	   if self.path=="/":
+	  	print "No Input"
+                self.path="index.html"
+		f = open(curdir + sep + self.path) 
+		self.send_response(200)
+               	self.send_header('Content-type','text/html')
+               	self.end_headers()
+		self.wfile.write(f.read())
+		return
+ 
+	   else:
 		try:
-			sendReply = False
-			if self.path.endswith(".html"):
-				mimetype='text/html'
-				sendReply = True
-			if self.path.endswith(".jpg"):
-				mimetype='image/jpg'
-				sendReply = True
-			if self.path.endswith(".gif"):
-				mimetype='image/gif'
-				sendReply = True
-			if self.path.endswith(".js"):
-				mimetype='application/javascript'
-				sendReply = True
-			if self.path.endswith(".css"):
-				mimetype='text/css'
-				sendReply = True
-			if self.path.endswith(".mp3"):
-				mimetype='audio/mp3' 
-				sendReply = True
-
-			if sendReply == True:
-				f = open(curdir + sep + self.path) 
-				self.send_response(200)
-				self.send_header('Content-type',mimetype)
-				self.end_headers()
-				self.wfile.write(f.read())
-				f.close()
-			return
-
-		except IOError:
-			self.send_error(404,'File Not Found: %s' % self.path)
+			imsi = urlparse.parse_qs(urlparse.urlparse(self.path).query).get('imsi', None)
+			link = imsi[0]
+			name = imsi[1]
+               		print "Your URL is: "+link
+          		print "Your Filename: "+name
+               		ydl_opts = {'outtmpl': 'songs/'+name+'.mp3','format': 'bestaudio/best','postprocessors':
+                         	[{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3','preferredquality': '192',}],}
+			with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                		ydl.download([link])
+			f = open('songs/'+name+'.mp3','rb')
+			self.send_response(200)
+			self.send_header('Content-type','audio/mpeg')
+			self.send_header('Content-Disposition', 'attachment; filename="%s.mp3"'% name)
+			self.end_headers()
+			self.wfile.write(f.read())
+			f.close()
+           	except IOError:
+              		self.send_error(404,'File Not Found: %s or maybe unvalid URL or not allowd charachters' % self.path)
+		
+		return
 
 	def do_POST(self):
 		  if self.path=="/send":
@@ -60,15 +60,15 @@ class myHandler(BaseHTTPRequestHandler):
 			self.send_response(200)
 			self.end_headers()
 
-                        ydl_opts = {'outtmpl': name+'.mp3','format': 'bestaudio/best','postprocessors': 
+                        ydl_opts = {'outtmpl': 'songs/'+name+'.mp3','format': 'bestaudio/best','postprocessors': 
 				[{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3','preferredquality': '192',}],}
 
 
                         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                             ydl.download([link])
-			self.wfile.write('<a href="%s.mp3" download>Download<a>' % name)
-    			#self.wfile.write('<center><a href="%s.mp3" download >Download<a><br><a href="index.html">Back<a></center>' % name)
-			return
+
+                        self.wfile.write("<a href='songs/%s.mp3' download>Download %s.mp3<a>" % (name,name))
+		   	return
 
 
 try:
