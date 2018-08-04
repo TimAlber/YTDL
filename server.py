@@ -2,31 +2,37 @@
 from __future__ import unicode_literals
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 import urlparse
+import urllib
 import songdetails
 import youtube_dl
 from os import curdir, sep, system
 import cgi
+from lxml import etree
 
 PORT_NUMBER = 8080
 class myHandler(BaseHTTPRequestHandler):
 
 	def do_GET(self):
 	   if self.path=="/":
-	  	print "No Input"
+	  	
                 self.path="index.html"
 		f = open(curdir + sep + self.path) 
 		self.send_response(200)
                	self.send_header('Content-type','text/html')
                	self.end_headers()
 		self.wfile.write(f.read())
-		return
+		
  
-	   else:
+	   elif self.path != "/send":
 		try:
 			imsi = urlparse.parse_qs(urlparse.urlparse(self.path).query).get('imsi', None)
-			link = imsi[0]
-			name = imsi[1]
-               		print "Your URL is: "+link
+			if imsi[0] != None:
+			   link = imsi[0]
+			try:
+			   name = imsi[1]
+               		except IndexError:
+			  name = " ".join(etree.HTML(urllib.urlopen(link).read()).xpath("//span[@id='eow-title']/@title"))
+			print "Your URL is: "+link
           		print "Your Filename: "+name
                		ydl_opts = {'outtmpl': 'songs/'+name+'.mp3','format': 'bestaudio/best','postprocessors':
                          	[{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3','preferredquality': '192',}],}
@@ -41,8 +47,8 @@ class myHandler(BaseHTTPRequestHandler):
 			f.close()
            	except IOError:
               		self.send_error(404,'File Not Found: %s or maybe unvalid URL or not allowd charachters' % self.path)
-		
-		return
+
+	        return
 
 	def do_POST(self):
 		  if self.path=="/send":
@@ -54,20 +60,29 @@ class myHandler(BaseHTTPRequestHandler):
 			})
 
 			link=form["url"].value
-			name=form["filename"].value
+			
 			print "Your URL is: "+link
+			try:
+			  name = form["filename"].value
+			except KeyError:
+			  name = " ".join(etree.HTML(urllib.urlopen(link).read()).xpath("//span[@id='eow-title']/@title"))
 			print "Your Filename: "+name
-			self.send_response(200)
-			self.end_headers()
-
-                        ydl_opts = {'outtmpl': 'songs/'+name+'.mp3','format': 'bestaudio/best','postprocessors': 
+			
+			ydl_opts = {'outtmpl': 'songs/'+name+'.mp3','format': 'bestaudio/best','postprocessors': 
 				[{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3','preferredquality': '192',}],}
 
 
                         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                             ydl.download([link])
 
-                        self.wfile.write("<a href='songs/%s.mp3' download>Download %s.mp3<a>" % (name,name))
+			f = open('songs/'+name+'.mp3','rb')
+                        self.send_response(200)
+                        self.send_header('Content-type','audio/mpeg')
+                        self.send_header('Content-Disposition', 'attachment; filename="%s.mp3"'% name)
+                        self.end_headers()
+                        self.wfile.write(f.read())
+                        f.close()
+                        
 		   	return
 
 
