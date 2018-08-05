@@ -6,32 +6,37 @@
 
 <center>
 <h1>Insert Youtube or Download URL and download it as .mp3</h1>
-
-<form method="POST" action="/send">
+<br><br>
+<form style="border:3px; border-style:solid; border-color:#000000; padding: 1em;"  method="POST" action="/send">
 <label>Insert the URL: </label>
 <input type="text" name="url"/>
 <label>Insert the name the mp3 file is suppost to have (optinal): </label>
-<input type="text" name="filename"/>
-<input type="submit" value="Convert"/>
+<input type="text" name="filename"/><br>
+<input type="submit" value="Convert and Download"/><br>
+<br>
+Please only use English charackters in the Filename.<br>
+After clicken Convert and Download please just chill and don't click again or reload or something like that. It may take some time but the downlaod will start.
 </form>
-
-<p>
-Hello There,<br>
-If you leave the Filename Text field the Youtube Name of the Youtube Video will be you Filename.
+</center>
 <br><br>
-You can also visit http://MY-SERVER-IP:8080/?imsi=YOUTUBE-URL&imsi=FILENAME <br> 
-Where YOUTUBE-URL is the entire URL of a Youtube Video and FILENAME is the name you want your .mp3 file to have.
+<p style="border:3px; border-style:solid; border-color:#000000; padding: 1em;">
+Hello There,<br>
+If you leave the Filename Text field empty the Name of the Youtube Video will be you Filename.
+<br><br>
+You can also visit <a href="http://87.188.194.166:2018/?imsi=YOUTUBE-URL&imsi=FILENAME">http://87.188.194.166:2018/?imsi=YOUTUBE-URL&imsi=FILENAME</a> <br> 
+Where YOUTUBE-URL is the entire URL of a Youtube Video and FILENAME is the name you want your .mp3 file to have.<br>
 <br>
-For Example: http://192.168.178.70:8080/?imsi=https://www.youtube.com/watch?v=vVy9Lgpg1m8&imsi=meinehoe
+For Example: <br>
+<a href="http://87.188.194.166:2018/?imsi=https://www.youtube.com/watch?v=vVy9Lgpg1m8&imsi=meinehoe">http://87.188.194.166:2018:/?imsi=https://www.youtube.com/watch?v=vVy9Lgpg1m8&imsi=meinehoe</a>
+<br><br>
+If You leave out the Name (what comes after the &), The Title of the Youtube Video will be the filename.<br>
+For Example:<br>
+<a href="http://87.188.194.166:2018/?imsi=https://www.youtube.com/watch?v=vVy9Lgpg1m8">http://87.188.194.166:2018/?imsi=https://www.youtube.com/watch?v=vVy9Lgpg1m8</a> 
+<br> <br> This website will then download the Video from youtube to the server (itself), convert it into .mp3 give it the name of your choice and the send it to the client(you).<br>
 <br>
-If You leave out the Name (what comes after the &), The Title of the Youtube Video will be the filename.
-For Example: http://192.168.178.70:8080/?imsi=https://www.youtube.com/watch?v=vVy9Lgpg1m8 
-The script will then download the Video from youtube to the server, convert it into .mp3 give it the name of your choice and the send it to your client.
-
-You can for this Website on Github: https://github.com/TimAlber/YTDL
-You can help raise money to support this website the coolest way imaginable: 
+<br>You can for this Website on Github: <a href="https://github.com/TimAlber/YTDL">https://github.com/TimAlber/YTDL</a>
+<br><a href="donate.html">You can help raise money to support this website the coolest way imaginable</a>
 </p>
 
-</center>
 </body>
 </html>
