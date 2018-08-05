@@ -1,5 +1,6 @@
 # YTDL
 Execute server.py on your Server
+Vist your server ip with port 8080 to see the index.html
 
 Visit http://MY-SERVER-IP:8080/?imsi=YOUTUBE-URL&imsi=FILENAME <br>
 Where YOUTUBE-URL is the entire URL of a Youtube Video and FILENAME is the name you want your .mp3 file to have.
